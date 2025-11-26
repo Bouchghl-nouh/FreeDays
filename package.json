@@ -1,14 +1,31 @@
 {
-  "name": "nodejs-master",
+  "name": "freedays-ma",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "script.js",
   "scripts": {
     "test": "jest"
   },
-  "author": "",
+  "author": "Ahmed Nouh Bouchghl",
   "license": "ISC",
-  "description": "",
+  "description": "A lightweight Node.js utility for Moroccan public holidays (remaining holidays, weekend holidays, next holiday, and more).",
   "devDependencies": {
     "jest": "^30.2.0"
-  }
+  },
+  "files": [
+    "script.js",
+    "data/",
+    "helpers/",
+    "README.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Bouchghl-nouh/FreeDays"
+  },
+  "keywords": [
+    "morocco",
+    "holidays",
+    "dates",
+    "calendar",
+    "freedays"
+  ]
 }
