@@ -3,37 +3,37 @@ const { holidays, days } = require("../data/holidays");
 const { getHolidayDate } = require("../helpers/utils");
 
 describe("FreeDays class", () => {
-  test("constructor should set country and year", () => {
+  test("should set country and year in constructor", () => {
     const f = new FreeDays("Mar", 2023);
     expect(f.country).toBe("Mar");
     expect(f.year).toBe(2023);
   });
-  test("constructor should return err", () => {
+  test("should throw an error for unsupported country", () => {
     expect(() => new FreeDays("Fra")).toThrow("unknown country : Fra");
   });
-  test("countWeekendHolidays", () => {
+  test("should correctly count weekend holidays for 2025", () => {
     const f = new FreeDays("Mar", 2025);
     expect(f.countWeekendHolidays()).toBe(1);
   });
-  test("countWeekendHolidays", () => {
+  test("should correctly count weekend holidays for 2023", () => {
     const f = new FreeDays("Mar", 2023);
     expect(f.countWeekendHolidays()).toBe(5);
   });
-  test("isHoliday returns true for valid holiday", () => {
+  test("should return true if the given date is a holiday", () => {
     const f = new FreeDays("Mar", 2023);
     expect(f.isHoliday("2023-01-11")).toBe(true);
   });
 
-  test("isHoliday returns false for invalid holiday", () => {
+  test("should return false if the given date is not a holiday", () => {
     const f = new FreeDays("Mar", 2023);
     expect(f.isHoliday("2023-02-01")).toBe(false);
   });
-  test("isHoliday should throw not a date if the input isn't a date", () => {
+  test("should throw an error when isHoliday receives an invalid date", () => {
     const f = new FreeDays("Mar", 2023);
     expect(() => f.isHoliday("23ljadf")).toThrow("not a date");
   });
 });
-describe("FreeDay methods", () => {
+describe("FreeDays methods with mocked dates", () => {
   beforeEach(() => {
     jest.useFakeTimers();
   });
@@ -41,11 +41,11 @@ describe("FreeDay methods", () => {
   afterEach(() => {
     jest.useRealTimers();
   });
-  test("should return the exact remaining days", () => {
+  test("should return the correct list of remaining holidays", () => {
     const mockToday = new Date("2025-11-01");
     jest.setSystemTime(mockToday);
-    const freeDays = new FreeDays("Mar", 2025);
-    const result = freeDays.getRemainingHolidays();
+    const f = new FreeDays("Mar", 2025);
+    const result = f.getRemainingHolidays();
     const expected = [
       {
         date: new Date("2025-11-06"),
@@ -60,14 +60,14 @@ describe("FreeDay methods", () => {
     ];
     expect(result).toEqual(expected);
   });
-  test("count remaining holidays", () => {
+  test("should count remaining holidays from the mocked current date", () => {
     const mockToday = new Date("2025-01-01");
     jest.setSystemTime(mockToday);
     const f = new FreeDays("Mar", 2025);
     const result = f.countRemainingHolidays();
     expect(result).toBe(10);
   });
-  test("next holiday", () => {
+  test("should return the next upcoming holiday even if it's in the next year", () => {
     const mockToday = new Date("2025-12-25");
     jest.setSystemTime(mockToday);
     const expected = {
@@ -79,7 +79,7 @@ describe("FreeDay methods", () => {
     const result = f.getNextHoliday();
     expect(result).toEqual(expected);
   });
-  test("wasted holidays should return the arr of objects describing the days who are weekend", () => {
+  test("should list holidays that fall on default weekend days", () => {
     const mockToday = new Date("2025-01-01");
     jest.setSystemTime(mockToday);
     const f = new FreeDays("Mar", 2025);
@@ -93,7 +93,7 @@ describe("FreeDay methods", () => {
     ];
     expect(res).toEqual(expected);
   });
-  test("wasted holidays with customized weekend", () => {
+  test("should detect weekend holidays using custom weekend (Thu, Fri)", () => {
     const mockToday = new Date("2025-01-01");
     jest.setSystemTime(mockToday);
     const f = new FreeDays("Mar", 2025);
@@ -127,7 +127,7 @@ describe("FreeDay methods", () => {
     ];
     expect(res).toEqual(expected);
   });
-  test("getWeekendHolidays returns empty array if weekend names don't match", () => {
+  test("should return an empty array when custom weekend names don't match any days", () => {
     const f = new FreeDays("Mar", 2025);
     expect(f.getWeekendHolidays("X", "Y")).toEqual([]);
   });

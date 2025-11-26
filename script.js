@@ -1,5 +1,5 @@
 const { holidays, days } = require("./data/holidays");
-const { getHolidayDate } = require("./helpers/utils");
+const { getHolidayDate,generateDayObject } = require("./helpers/utils");
 class FreeDays {
   constructor(country, year = new Date().getFullYear()) {
     if (!holidays[country]) throw new Error(`unknown country : ${country}`);
@@ -11,14 +11,9 @@ class FreeDays {
     const countryHolidays = holidays[this.country] || [];
     const remainingHolidays = [];
     countryHolidays.forEach((holiday) => {
-      const holidayDate = getHolidayDate(holiday, this.year);
-      if (today < holidayDate) {
-        const dayName = days[holidayDate.getDay()];
-        remainingHolidays.push({
-          date: holidayDate,
-          formatted: holidayDate.toDateString(),
-          day: dayName,
-        });
+      const dayObject = generateDayObject(holiday,this.year);
+      if (today < dayObject.date) {
+        remainingHolidays.push(dayObject);
       }
     });
     return remainingHolidays;
@@ -30,15 +25,9 @@ class FreeDays {
     const countryHolidays = holidays[this.country] || [];
     const weekendHolidays = [];
     countryHolidays.forEach((holiday) => {
-      const holidayDate = getHolidayDate(holiday, this.year);
-      const dayName = days[holidayDate.getDay()];
-
-      if (dayName === free1 || dayName === free2) {
-        weekendHolidays.push({
-          date: holidayDate,
-          formatted: holidayDate.toDateString(),
-          day: dayName,
-        });
+      const dayObject = generateDayObject(holiday,this.year);
+      if (dayObject.day === free1 || dayObject.day  === free2) {
+        weekendHolidays.push(dayObject);
       }
     });
     return weekendHolidays;
@@ -67,27 +56,14 @@ class FreeDays {
     const today = new Date();
     const countryHolidays = holidays[this.country] || [];
     for (const holiday of countryHolidays) {
-      const holidayDate = getHolidayDate(holiday, this.year);
-      const dayName = days[holidayDate.getDay()];
-      if (today < holidayDate) {
-        return {
-          date: holidayDate,
-          formatted: holidayDate.toDateString(),
-          day: dayName,
-        };
+      const dayObject = generateDayObject(holiday,this.year);
+      if (today < dayObject.date) {
+        return dayObject;
       }
     }
     if (countryHolidays.length > 0) {
-      const holidayDate = getHolidayDate(
-        countryHolidays[0],
-        new Date().getFullYear() + 1
-      );
-      const dayName = days[holidayDate.getDay()];
-      return {
-        date: holidayDate,
-        formatted: holidayDate.toDateString(),
-        day: dayName,
-      };
+      const dayObject = generateDayObject(countryHolidays[0],this.year+1);
+      return dayObject;
     }
     return null;
   }
